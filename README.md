@@ -1,9 +1,11 @@
-Sistema de Autorização de Pagamentos
+** Sistema de Autorização de Pagamentos
 
-Descrição
+** Descrição
+
 Sistema de autorização de pagamentos que simula a comunicação entre um terminal TEF e uma rede adquirente, com API REST e servidor socket.
 
-Funcionalidades
+** Funcionalidades
+
 Processamento de transações com cartão de crédito
 
 Validação de valores (pares/ímpares, negativos, timeout)
@@ -25,7 +27,7 @@ Java 17+
 Maven 3.6+
 Postman (para testes)
 
-Como Executar
+** Como Executar
 
 mvn clean install
 
