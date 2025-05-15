@@ -1,64 +1,76 @@
-** Sistema de Autorização de Pagamentos
+# Sistema de Autorização de Pagamentos
 
-** Descrição
+**Descrição**
 
 Sistema de autorização de pagamentos que simula a comunicação entre um terminal TEF e uma rede adquirente, com API REST e servidor socket.
 
-** Funcionalidades
+**Funcionalidades**
 
-Processamento de transações com cartão de crédito
+* Processamento de transações com cartão de crédito
+* Validação de valores (pares/ímpares, negativos, timeout)
+* Geração de códigos de autorização
+* Comunicação via sockets (protocolo ISO8583 simplificado)
+* API REST para integração
+* Regras de Negócio
+    * Valores pares: APROVADO (código 000)
+    * Valores ímpares: NEGADO (código 051)
+    * Valores negativos: NEGADO AUTOMÁTICO
+    * Valores > 1000: Timeout
 
-Validação de valores (pares/ímpares, negativos, timeout)
+**Pré-requisitos**
 
-Geração de códigos de autorização
+* Java 17+
+* Maven 3.6+
+* Postman (para testes)
 
-Comunicação via sockets (protocolo ISO8583 simplificado)
+**Como Executar**
 
-API REST para integração
+1.  Compile o projeto:
 
-Regras de Negócio
-Valores pares: APROVADO (código 000)
-Valores ímpares: NEGADO (código 051)
-Valores negativos: NEGADO AUTOMÁTICO
-Valores > 1000: Timeout
+    ```bash
+    mvn clean install
+    ```
 
-Pré-requisitos
-Java 17+
-Maven 3.6+
-Postman (para testes)
+2.  Inicie o servidor autorizador:
 
-** Como Executar
+    ```bash
+    mvn exec:java
+    ```
 
-mvn clean install
+3.  Inicie a API REST:
 
-Iniciar servidor autorizador:
-mvn exec:java
+    ```bash
+    mvn spring-boot:run
+    ```
 
-Iniciar API REST:
-mvn spring-boot:run
+**Como Testar**
 
-Para testar, faça uma requisição POST no Postman com essa URL: http://localhost:8080/authorization
+Para testar a API, faça uma requisição POST no Postman para a seguinte URL:
 
-Adicione no header os seguintes parâmetros:
+    http://localhost:8080/authorization
 
-KEY            VALUE
-Content-Type - application/json
-x-identifier - 123456789
+Adicione os seguintes parâmetros no cabeçalho (header):
 
-Insira o corpo abaixo, e faça alterações no valor para verificar a validação.
+| Chave          | Valor             |
+| :------------- | :---------------- |
+| Content-Type   | application/json  |
+| x-identifier   | 123456789       |
 
+Insira o corpo da requisição no formato JSON abaixo. Altere o valor da transação (`value`) para testar as diferentes regras de negócio.
+
+```json
 {
-  "external_id": "",
-  "value": 200,
-  "cardNumber": "",
-  "installments": 2,
-  "cvv": "",
-  "expMonth": 11,
-  "expYear": 28,
-  "holder_name": "Destaxa"
+    "external_id": "",
+    "value": 200,
+    "cardNumber": "",
+    "installments": 2,
+    "cvv": "",
+    "expMonth": 11,
+    "expYear": 28,
+    "holder_name": "Destaxa"
 }
 
-Exemplo de Log do Servidor:
+Exemplo de Log do Servidor
 
 === REQUISIÇÃO RECEBIDA ===
 Mensagem: 0200|4111111111111111|2380|003001|2|123|1128
@@ -70,3 +82,5 @@ Código: 000
 Autorização: 123456
 Data: 15/05/2025
 Hora: 14:30:45
+
+```
